@@ -1,12 +1,9 @@
-version: '3.8'
-services:
+networks:
   orion-bootcamp-app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "4200:4200"
+    name: orion-bootcamp-app
+    driver: bridge
 
+services:
   nginx:
     build:
       context: .
@@ -14,4 +11,20 @@ services:
     ports:
       - "3000:80"
     depends_on:
+      - angular-app
+    networks:
+      - orion-bootcamp-app
+
+  angular-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "4200"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
       - orion-bootcamp-app
