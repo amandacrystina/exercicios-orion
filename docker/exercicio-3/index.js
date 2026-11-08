@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
     const result = await pool.query('SELECT COUNT(*) AS total FROM visitas');
     const total = result.rows[0].total;
 
-    res.send(`<h1>Hello from Docker!</h1><p>Você e outras pessoas já visitaram esta página <b>${total}</b> vezes. O banco está salvando tudo!</p>`);
+    res.send(`<h1>hackeando a produção</h1><p>Você e outras pessoas já visitaram esta página <b>${total}</b> vezes. O banco está salvando tudo!</p>`);
   } catch (error) {
     console.error(error);
     res.status(500).send('Erro ao conectar no banco de dados');
