@@ -1,5 +1,5 @@
 const express = require('express');
-const { Pool } = require('pg'); 
+const { Pool } = require('pg');
 
 const app = express();
 const port = 3000;
@@ -12,21 +12,35 @@ const pool = new Pool({
   port: 5432,
 });
 
-pool.query(`
-  CREATE TABLE IF NOT EXISTS visitas (
-    id SERIAL PRIMARY KEY,
-    data_visita TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );
-`).catch(err => console.error("Erro ao criar tabela:", err));
+async function inicializarBanco() {
+  let tentativas = 5;
+  while (tentativas > 0) {
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS visitas (
+          id SERIAL PRIMARY KEY,
+          data_visita TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      console.log("Tabela visitas criada/verificada com sucesso!");
+      break;
+    } catch (err) {
+      console.log(`Banco iniciando... Tentando novamente em 3 segundos. (${tentativas} tentativas restantes)`);
+      tentativas -= 1;
+      await new Promise(res => setTimeout(res, 3000));
+    }
+  }
+}
+
+inicializarBanco();
 
 app.get('/', async (req, res) => {
   try {
     await pool.query('INSERT INTO visitas DEFAULT VALUES');
-    
     const result = await pool.query('SELECT COUNT(*) AS total FROM visitas');
     const total = result.rows[0].total;
 
-    res.send(`<h1>hackeando a produção</h1><p>Você e outras pessoas já visitaram esta página <b>${total}</b> vezes. O banco está salvando tudo!</p>`);
+    res.send(`<h1>olá mundo</h1><p>Você e outras pessoas já visitaram esta página <b>${total}</b> vezes. O banco está salvando tudo!</p>`);
   } catch (error) {
     console.error(error);
     res.status(500).send('Erro ao conectar no banco de dados');
