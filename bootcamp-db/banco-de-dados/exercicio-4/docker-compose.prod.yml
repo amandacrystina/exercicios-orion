@@ -1,0 +1,16 @@
+name: OrionProdEx4
+
+services:
+  db_postgres:
+    image: postgres:15-alpine
+    container_name: postgres_prod_ex4
+    env_file:
+      - .env
+    restart: always
+
+  db_mongo:
+    image: mongo:6-jammy
+    container_name: mongo_prod_ex4
+    env_file:
+      - .env
+    restart: always
