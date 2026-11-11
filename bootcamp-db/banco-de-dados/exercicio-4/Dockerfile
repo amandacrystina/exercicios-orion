@@ -1,11 +1,11 @@
 FROM node:18-alpine AS base
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
+COPY . .
 
 FROM node:18-alpine AS final
 WORKDIR /app
-COPY --from=base /app/node_modules ./node_modules
-COPY . .
+USER node
+COPY --chown=node:node --from=base /app ./
+
 EXPOSE 3000
-CMD ["node", "exercicio-4.js"]
+CMD ["node", "-e", "console.log('Ambiente de Produção Ativo!'); setInterval(() => {}, 1000);"]

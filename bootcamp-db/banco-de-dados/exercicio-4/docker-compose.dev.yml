@@ -1,6 +1,22 @@
 name: OrionDevEx4
 
 services:
+  app_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: app_dev_ex4
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - db_mongo
+      - db_postgres
+
   db_postgres:
     image: postgres:15-alpine
     container_name: postgres_dev_ex4

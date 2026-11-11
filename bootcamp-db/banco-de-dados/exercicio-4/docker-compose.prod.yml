@@ -1,12 +1,28 @@
 name: OrionProdEx4
 
 services:
+  app_prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_prod_ex4
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db_mongo
+      - db_postgres
+
   db_postgres:
     image: postgres:15-alpine
     container_name: postgres_prod_ex4
     env_file:
       - .env
     restart: always
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
 
   db_mongo:
     image: mongo:6-jammy
@@ -14,3 +30,9 @@ services:
     env_file:
       - .env
     restart: always
+    volumes:
+      - mongo_prod_data:/data/db
+
+volumes:
+  postgres_prod_data:
+  mongo_prod_data:
